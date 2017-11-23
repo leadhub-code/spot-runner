@@ -9,7 +9,7 @@ Usage
 
 ```shell
 $ pip install https://github.com/leadhub-code/spot-runner/archive/master.zip
-$ spot-runner -v  run_spot_instance --blueprint examples/hello/blueprint.yaml
+$ spot-runner -v run_spot_instance --blueprint examples/hello/blueprint.yaml
 ```
 
 Screenshot

@@ -7,7 +7,7 @@ setup(
     name='spot-runner',
     version='0.0.1',
     description='AWS EC2 spot instance runner',
-    url='https://github.com/messa/spot-runner',
+    url='https://github.com/leadhub-code/spot-runner',
     author='Petr Messner',
     author_email='petr.messner@gmail.com',
     license='MIT',
