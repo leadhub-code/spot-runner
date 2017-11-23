@@ -1,0 +1,7 @@
+.DS_Store
+__pycache__
+*.pyc
+*.egg-info
+local
+examples/*/state.yaml
+examples/*/state.yaml.backup*

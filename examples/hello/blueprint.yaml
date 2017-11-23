@@ -1,0 +1,25 @@
+spot_runner_blueprint:
+    region: eu-west-1
+    ami_owner_id_whitelist: ['379101102735']
+    task_id_template: hello-{date}-{fqdn}
+    spot_price: '1.50'
+    upload:
+        - hello.sh
+    upload_preprocessed: []
+    remote_command: ['bash', 'uploaded/hello.sh']
+    launch_specification:
+        ImageId: ami-ce76a7b7 # debian-stretch-hvm-x86_64-gp2-2017-10-08-48016
+        KeyName: your-keyname-here
+        # ^^^ Setup Key pair Pere:
+        # https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#KeyPairs:sort=keyName
+        SecurityGroupIds:
+          - sg-123
+        # ^^^ Setup Security Groups here:
+        # https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#SecurityGroups:sort=groupId
+        InstanceType: m4.large
+        BlockDeviceMappings:
+          - DeviceName: xvda
+            Ebs:
+              VolumeType: gp2
+              VolumeSize: 20
+              DeleteOnTermination: false
