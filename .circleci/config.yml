@@ -4,7 +4,7 @@ jobs:
     build_python34:
         working_directory: ~/spot-runner
         docker:
-            - image: circleci/python:3.5
+            - image: circleci/python:3.4
         steps: &STEPS
             - checkout
             - run:
@@ -25,7 +25,7 @@ jobs:
     build_python36:
         working_directory: ~/spot-runner
         docker:
-            - image: circleci/python:3.5
+            - image: circleci/python:3.6
         steps: *STEPS
 
 workflows:
