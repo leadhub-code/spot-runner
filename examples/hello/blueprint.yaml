@@ -5,7 +5,6 @@ spot_runner_blueprint:
     spot_price: '1.50'
     upload:
         - hello.sh
-    upload_preprocessed: []
     remote_command: ['bash', 'uploaded/hello.sh']
     launch_specification:
         ImageId: ami-ce76a7b7 # debian-stretch-hvm-x86_64-gp2-2017-10-08-48016
