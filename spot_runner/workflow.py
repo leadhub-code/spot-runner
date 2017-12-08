@@ -88,7 +88,7 @@ class RunSpotInstance:
             ssh_args.append('-t')
         full_cmd = [
             '/usr/bin/ssh',
-            *ssh_args,
+        ] + ssh_args + [
             self.instance_public_ip(),
             'env',
             'TASK_ID=' + self.state['task_id'],
