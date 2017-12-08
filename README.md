@@ -42,3 +42,10 @@ spot_runner_blueprint:
           - sg-123
         InstanceType: m4.large
 ```
+
+Links
+-----
+
+This Spot Runner is specialized on management and setup of EC2 instances. For general AWS resource management we recommend [Terraform](https://www.terraform.io/).
+
+[Leadhub Opensource](https://leadhub-code.github.io/)
