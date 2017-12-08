@@ -1,6 +1,8 @@
 Spot runner
 ===========
 
+[![CircleCI](https://circleci.com/gh/leadhub-code/spot-runner/tree/master.svg?style=svg&circle-token=fbc9a48dedaf93475236823b3a4ad3b6b91da208)](https://circleci.com/gh/leadhub-code/spot-runner/tree/master)
+
 Run stuff on AWS spot instances easily.
 
 
