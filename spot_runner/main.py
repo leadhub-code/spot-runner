@@ -20,8 +20,11 @@ def spot_runner_main():
     except SystemExit as e:
         raise e
     except BaseException as e:
-        logger.exception('Failed: %r', e)
+        logger.exception('Spot runner failed: %r', e)
         sys.exit(1)
+
+
+# Click docs; http://click.pocoo.org/5/
 
 
 @click.group()
@@ -63,7 +66,11 @@ def run_spot_instance(ctx, blueprint):
 log_format = '%(asctime)s %(name)-22s %(levelname)5s: %(message)s'
 
 
-def setup_logging(console_level, log_file):
+def setup_logging(console_level, log_file=None):
+    '''
+    Log to stderr with given console level (0: warnings, 1: info, 2+: debug).
+    Log to log file if path given.
+    '''
     from logging import DEBUG, INFO, WARNING, Formatter
     from logging.handlers import WatchedFileHandler
     logging.getLogger().setLevel(DEBUG)
@@ -83,7 +90,7 @@ def setup_logging(console_level, log_file):
     logging.getLogger().addHandler(h)
 
     if log_file:
-        h = WatchedFileHandler()
+        h = WatchedFileHandler(str(log_file))
         h.setFormatter(Formatter(log_format))
         h.setLevel(DEBUG)
         logging.getLogger().addHandler(h)

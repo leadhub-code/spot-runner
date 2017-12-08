@@ -2,6 +2,7 @@
 __pycache__
 *.pyc
 *.egg-info
+*.log
 local
 examples/*/state.yaml
 examples/*/state.yaml.backup*
