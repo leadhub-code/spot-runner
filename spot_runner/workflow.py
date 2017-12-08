@@ -7,6 +7,8 @@ from socket import getfqdn
 import subprocess
 from time import monotonic as monotime, sleep
 
+from .file_transformations import preprocess_file
+
 
 logger = logging.getLogger(__name__)
 
@@ -58,16 +60,18 @@ class RunSpotInstance:
             else:
                 logger.info('Copying file %s to %s', p, build_dir)
                 copy2(str(p), str(build_dir / p.name))
-        '''
         for p in self.blueprint.upload_preprocessed_paths:
             if not p.is_file():
                 raise Exception('Preprocess path must be file: {}'.format(p))
-            content = preprocess_file(p, values={})
+            content = preprocess_file(p, values={
+                'instance_id': self.state['instance_id'],
+                'task_id': self.state['task_id'],
+            })
             target_path = build_dir / p.name
             if target_path.exists():
-                raise Exception('File already exists: {}'.format(target_path))
-            target_path.write_text(content)
-        '''
+                logger.info('Rewriting file %s', target_path)
+            with target_path.open('w') as f:
+                f.write(content)
         return build_dir
 
 

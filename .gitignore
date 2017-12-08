@@ -6,3 +6,4 @@ __pycache__
 local
 examples/*/state.yaml
 examples/*/state.yaml.backup*
+.cache

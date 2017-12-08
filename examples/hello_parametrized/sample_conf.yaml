@@ -1,0 +1,8 @@
+#!jinja
+#!yaml-includes
+# ^^^ these filters are applied on local machine right before uploading files to remote machine
+jinja_values_provided_by_spot_runner:
+    task_id: {{ task_id }}
+    instance_id: {{ instance_id }}
+sample_text_provided_by_yaml_includes_filter:
+    INCLUDE_TEXT: sample_file.txt

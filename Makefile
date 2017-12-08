@@ -2,7 +2,7 @@ python3=python3
 venv_dir=local/venv
 
 check: $(venv_dir)/packages-installed
-	$(venv_dir)/bin/pytest -vs tests
+	$(venv_dir)/bin/pytest -vv --tb=native tests
 
 venv: $(venv_dir)/packages-installed
 

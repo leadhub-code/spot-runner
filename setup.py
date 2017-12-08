@@ -24,6 +24,7 @@ setup(
     install_requires=[
         'boto3',
         'click',
+        'jinja2',
         'pyyaml',
     ],
     entry_points={
