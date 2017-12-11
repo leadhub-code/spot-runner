@@ -36,9 +36,16 @@ def preprocess_jinja(base_path, content, values=None):
     t = jinja2.Template(content)
     # TODO: jinja includes
 
-    def read_file(path):
-        with (base_path / path).open('r') as f:
-            return f.read()
+    def read_file(*paths):
+        for path in paths:
+            full_path = base_path / path
+            try:
+                with full_path.open('r') as f:
+                    return f.read()
+            except FileNotFoundError:
+                logger.info('File not found: %s (%s)', path, full_path)
+                continue
+        raise Exception('Failed to read file(s) {}'.format(' '.join(str(p) for p in paths)))
 
     values.update({
         'read_file': read_file,
