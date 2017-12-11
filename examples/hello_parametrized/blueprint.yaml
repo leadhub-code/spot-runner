@@ -1,5 +1,7 @@
+#!jinja
+{% set region_name = 'eu-west-1' %}
 spot_runner_blueprint:
-    region: eu-west-1
+    region: {{ region_name }}
     ami_owner_id_whitelist: ['379101102735']
     task_id_template: hello-{date}-{fqdn}
     spot_price: '1.50'

@@ -20,6 +20,7 @@ def spot_runner_main():
     except SystemExit as e:
         raise e
     except BaseException as e:
+        # we want error messages to go into log; default handlers only prints to stderr
         logger.exception('Spot runner failed: %r', e)
         sys.exit(1)
 
