@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 class RunSpotInstance:
 
+    console_output_timeout = 180
+
     def __init__(self, state, blueprint, temp_dir):
         self.state = state
         self.blueprint = blueprint
@@ -132,7 +134,7 @@ class RunSpotInstance:
             logger.debug('reply: %s', smart_repr(reply))
             if 'Output' in reply:
                 return reply['Output'].splitlines()
-            if monotime() - start_mt > 60:
+            if monotime() - start_mt > self.console_output_timeout:
                 raise Exception('No console output received')
             logger.debug('No output yet, sleeping...')
             sleep(1)
