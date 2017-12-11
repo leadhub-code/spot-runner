@@ -16,6 +16,9 @@ $ vim examples/hello/blueprint.yaml
 $ spot-runner -v run_spot_instance --blueprint examples/hello/blueprint.yaml
 ```
 
+Do not forget to terminate the instance :)
+
+
 Screenshot
 ----------
 
