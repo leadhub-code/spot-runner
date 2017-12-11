@@ -160,15 +160,37 @@ class RunSpotInstance:
             instance_id = sir_info['InstanceId']
             logger.info('Retrieved instance id %s', instance_id)
             self.state['instance_id'] = instance_id
-            self.ec2_client.create_tags(
-                DryRun=False, Resources=[instance_id],
-                Tags=[
-                    {'Key': 'Name', 'Value': self.state['task_id']},
-                    {'Key': 'TaskId', 'Value': self.state['task_id']},
-                    {'Key': 'CreatedBy', 'Value': __name__},
-                ])
+            if not self.state.get('tags_created'):
+                self.tag_instance(instance_id, self.state['task_id'])
+                self.tag_volumes(instance_id, self.state['task_id'])
+                self.state['tags_created'] = True
             logger.info('Instance tags created')
         return self.state['instance_id']
+
+    def tag_instance(self, instance_id, task_id):
+        self.ec2_client.create_tags(
+            DryRun=False, Resources=[instance_id],
+            Tags=[
+                {'Key': 'Name', 'Value': task_id},
+                {'Key': 'TaskId', 'Value': task_id},
+                {'Key': 'CreatedBy', 'Value': __name__},
+            ])
+        logger.info('Instance tags created')
+
+    def tag_volumes(self, instance_id, task_id):
+        result = self.ec2_client.describe_volumes(
+            DryRun=False,
+            Filters=[
+                {'Name': 'attachment.instance-id', 'Values': [instance_id]},
+            ])
+        vol_ids = [volume['VolumeId'] for volume in result['Volumes']]
+        self.ec2_client.create_tags(
+            DryRun=False, Resources=vol_ids,
+            Tags=[
+                {'Key': 'TaskId', 'Value': task_id},
+                {'Key': 'CreatedBy', 'Value': __name__},
+            ])
+        logger.info('Volume tags created: %s', vol_ids)
 
     def instance_info(self):
         if not self._instance_info:
