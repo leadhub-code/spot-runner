@@ -2,6 +2,7 @@ import boto3
 from datetime import datetime
 import logging
 import hashlib
+from pathlib import Path
 from reprlib import repr as smart_repr
 from socket import getfqdn
 import subprocess
@@ -38,7 +39,13 @@ class RunSpotInstance:
 
     def upload(self):
         build_dir = self.prepare_upload_build()
-        data = subprocess.check_output(['/bin/tar', 'c', '-C', str(build_dir), '.'])
+        for p in '/bin/tar', '/usr/bin/tar':
+            if Path(p).exists():
+                tar_path = p
+                break
+        else:
+            raise Exception('Could not find tar')
+        data = subprocess.check_output([str(tar_path), 'c', '-C', str(build_dir), '.'])
         data_sha1 = hashlib.sha1(data).hexdigest()
         if self.state.get('uploaded_data_sha1') == data_sha1:
             logger.info('Remote data are already uploaded (sha1: %s)', data_sha1)
