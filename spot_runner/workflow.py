@@ -108,7 +108,11 @@ class RunSpotInstance:
 
     def ssh_private_key_path(self):
         if not self.blueprint.ssh_private_key:
-            raise Exception('no SSH private key in blueprint')
+            msg = 'No SSH private key available. '
+            msg += 'Pass it via blueprint parameter ssh_private_key_path '
+            msg += 'or save it into one of these files: '
+            msg += ' '.join(str(p) for p in self.blueprint.ssh_private_key_search_paths)
+            raise AppError(msg)
         p = self.temp_dir / 'ssh_private_key'
         if not p.is_file():
             p.write_text(self.blueprint.ssh_private_key)

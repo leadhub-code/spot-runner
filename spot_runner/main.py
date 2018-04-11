@@ -80,9 +80,9 @@ def setup_logging(console_level, log_file=None):
     from logging.handlers import WatchedFileHandler
     logging.getLogger().setLevel(DEBUG)
 
-    if console_level < 2:
+    if console_level < 3:
         # TODO: filter in a handler instead in logger
-        logging.getLogger('botocore.vendored.requests.packages.urllib3.connectionpool').setLevel(WARNING)
+        logging.getLogger('botocore').setLevel(INFO)
 
     h = logging.StreamHandler()
     h.setFormatter(Formatter(log_format))

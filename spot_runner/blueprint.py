@@ -32,8 +32,10 @@ class Blueprint:
             if d.get('ssh_private_key_path'):
                 ssh_pk_path = base_dir / d['ssh_private_key_path']
                 self.ssh_private_key = ssh_pk_path.read_text()
+                self.ssh_private_key_search_paths = None
             else:
-                self.ssh_private_key = find_ssh_key(base_dir, self.launch_specification['KeyName'])
+                self.ssh_private_key, self.ssh_private_key_search_paths = \
+                    find_ssh_key(base_dir, self.launch_specification['KeyName'])
         except Exception as e:
             msg = 'Failed to read blueprint file {}: {!r}'.format(self._path, e)
             raise AppError(msg) from e
@@ -52,7 +54,10 @@ def find_ssh_key(base_dir, key_name):
         base_dir / 'ssh_keys/{}.pem'.format(key_name),
         Path.home() / '.ssh/{}.pem'.format(key_name),
     ]
+    private_key = None
     for p in search_paths:
+        logger.debug('Looking for SSH key in %s', p)
         if p.is_file():
             logger.info('Reading SSH key from %s', p)
-            return p.read_text()
+            private_key = p.read_text()
+    return (private_key, search_paths)
