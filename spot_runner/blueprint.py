@@ -29,6 +29,7 @@ class Blueprint:
             self.remote_command = d['remote_command']
             self.launch_specification = d['launch_specification']
             self.ssh_username = d.get('ssh_username')
+            self.interactive_shell = d.get('interactive_shell')
             if d.get('ssh_private_key_path'):
                 ssh_pk_path = base_dir / d['ssh_private_key_path']
                 self.ssh_private_key = ssh_pk_path.read_text()

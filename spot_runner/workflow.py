@@ -32,6 +32,11 @@ class RunSpotInstance:
         self.upload()
         self.run_ssh(self.blueprint.remote_command)
 
+    def run_interactive_ssh(self):
+        self.ensure_instance()
+        self.instance_info()
+        self.run_ssh(self.blueprint.interactive_shell or ['/bin/bash', '-l'], tty=True)
+
     def ensure_instance(self):
         if self.state.get('instance_id'):
             logger.info('Instance id: %s', self.state['instance_id'])

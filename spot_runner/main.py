@@ -35,26 +35,24 @@ def spot_runner_main():
 @click.group()
 @click.option('--verbose', '-v', count=True)
 @click.option('--log', metavar='FILE', help='path to log file')
-@click.option('--state', metavar='FILE', help='path to state file')
-@click.option('--new-state', '-n', is_flag=True, help='create new state file')
 @click.pass_context
-def cli(ctx, verbose, log, state, new_state):
+def cli(ctx, verbose, log):
     log_path = log or os.environ.get('SPOT_RUNNER_LOG')
     setup_logging(console_level=verbose, log_file=log_path)
-    ctx.obj['state_path'] = state
-    ctx.obj['state_new'] = new_state
 
 
 @cli.command()
 @click.option('--blueprint', metavar='FILE', default='blueprint.yaml')
+@click.option('--state', metavar='FILE', help='path to state file')
+@click.option('--new-state', '-n', is_flag=True, help='create new state file')
 @click.pass_context
-def run_spot_instance(ctx, blueprint):
+def run_spot_instance(ctx, blueprint, state, new_state):
     bp = Blueprint(blueprint)
     state_path = Path(
-        ctx.obj['state_path']
-        or os.environ.get('SPOT_RUNNER_STATE')
-        or Path(blueprint).with_name('state.yaml'))
-    if ctx.obj['state_new']:
+        state or
+        os.environ.get('SPOT_RUNNER_STATE') or
+        Path(blueprint).with_name('state.yaml'))
+    if new_state:
         if state_path.is_file():
             backup_suffix = '.backup-{date}'.format(
                 date=datetime.utcnow().strftime('%Y%m%dT%H%M%SZ'))
@@ -66,6 +64,22 @@ def run_spot_instance(ctx, blueprint):
         with TemporaryDirectory(prefix='spot_runner.') as td:
             r = RunSpotInstance(state=state, blueprint=bp, temp_dir=Path(td))
             r.run_spot_instance()
+
+
+@cli.command()
+@click.option('--blueprint', metavar='FILE', default='blueprint.yaml')
+@click.option('--state', metavar='FILE', help='path to state file')
+@click.pass_context
+def ssh(ctx, blueprint, state):
+    bp = Blueprint(blueprint)
+    state_path = Path(
+        state or
+        os.environ.get('SPOT_RUNNER_STATE') or
+        Path(blueprint).with_name('state.yaml'))
+    with open_state_file(state_path) as state:
+        with TemporaryDirectory(prefix='spot_runner.') as td:
+            r = RunSpotInstance(state=state, blueprint=bp, temp_dir=Path(td))
+            r.run_interactive_ssh()
 
 
 log_format = '%(asctime)s %(name)-22s %(levelname)5s: %(message)s'
