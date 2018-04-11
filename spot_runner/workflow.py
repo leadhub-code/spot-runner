@@ -68,6 +68,8 @@ class RunSpotInstance:
         build_dir.mkdir()
         for p in self.blueprint.upload_paths:
             if not p.exists():
+                p = p.expanduser()
+            if not p.exists():
                 raise Exception('Upload item does not exist: {}'.format(p))
             if p.is_dir():
                 logger.info('Copying directory %s to %s', p, build_dir)
