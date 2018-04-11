@@ -7,3 +7,4 @@ local
 examples/*/state.yaml
 examples/*/state.yaml.backup*
 .cache
+.pytest_cache
