@@ -7,6 +7,7 @@ import sys
 from tempfile import TemporaryDirectory
 
 from .blueprint import Blueprint
+from .errors import AppError
 from .state import open_state_file
 from .workflow import RunSpotInstance
 
@@ -21,7 +22,10 @@ def spot_runner_main():
         raise e
     except BaseException as e:
         # we want error messages to go into log; default handlers only prints to stderr
-        logger.exception('Spot runner failed: %r', e)
+        if isinstance(e, AppError):
+            logger.error('Spot runner failed: %s', e)
+        else:
+            logger.exception('Spot runner failed: %r', e)
         sys.exit(1)
 
 

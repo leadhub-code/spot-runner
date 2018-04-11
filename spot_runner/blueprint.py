@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 import yaml
 
+from .errors import AppError
 from .file_transformations import preprocess_file
 
 logger = logging.getLogger(__name__)
@@ -35,7 +36,7 @@ class Blueprint:
                 self.ssh_private_key = find_ssh_key(base_dir, self.launch_specification['KeyName'])
         except Exception as e:
             msg = 'Failed to read blueprint file {}: {!r}'.format(self._path, e)
-            raise Exception(msg) from e
+            raise AppError(msg) from e
 
 
 def to_paths(base_dir, value):

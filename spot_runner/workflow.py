@@ -8,6 +8,7 @@ from socket import getfqdn
 import subprocess
 from time import monotonic as monotime, sleep
 
+from .errors import AppError
 from .file_transformations import preprocess_file
 
 
@@ -82,7 +83,6 @@ class RunSpotInstance:
             with target_path.open('w') as f:
                 f.write(content)
         return build_dir
-
 
     def run_ssh(self, cmd, input=None, tty=False):
         assert isinstance(cmd, list)
