@@ -35,8 +35,7 @@ def spot_runner_main():
 @click.group()
 @click.option('--verbose', '-v', count=True)
 @click.option('--log', metavar='FILE', help='path to log file')
-@click.pass_context
-def cli(ctx, verbose, log):
+def cli(verbose, log):
     log_path = log or os.environ.get('SPOT_RUNNER_LOG')
     setup_logging(console_level=verbose, log_file=log_path)
 
@@ -45,8 +44,7 @@ def cli(ctx, verbose, log):
 @click.option('--blueprint', metavar='FILE', default='blueprint.yaml')
 @click.option('--state', metavar='FILE', help='path to state file')
 @click.option('--new-state', '-n', is_flag=True, help='create new state file')
-@click.pass_context
-def run_spot_instance(ctx, blueprint, state, new_state):
+def run_spot_instance(blueprint, state, new_state):
     bp = Blueprint(blueprint)
     state_path = Path(
         state or
@@ -69,8 +67,22 @@ def run_spot_instance(ctx, blueprint, state, new_state):
 @cli.command()
 @click.option('--blueprint', metavar='FILE', default='blueprint.yaml')
 @click.option('--state', metavar='FILE', help='path to state file')
-@click.pass_context
-def ssh(ctx, blueprint, state):
+def instance_id(blueprint, state):
+    '''
+    Read instance id from state file
+    '''
+    state_path = Path(
+        state or
+        os.environ.get('SPOT_RUNNER_STATE') or
+        Path(blueprint).with_name('state.yaml'))
+    with open_state_file(state_path) as state:
+        print(state['instance_id'])
+
+
+@cli.command()
+@click.option('--blueprint', metavar='FILE', default='blueprint.yaml')
+@click.option('--state', metavar='FILE', help='path to state file')
+def ssh(blueprint, state):
     bp = Blueprint(blueprint)
     state_path = Path(
         state or
