@@ -82,6 +82,21 @@ def instance_id(blueprint, state):
 @cli.command()
 @click.option('--blueprint', metavar='FILE', default='blueprint.yaml')
 @click.option('--state', metavar='FILE', help='path to state file')
+def ip_address(blueprint, state):
+    '''
+    Read instance id from state file
+    '''
+    state_path = Path(
+        state or
+        os.environ.get('SPOT_RUNNER_STATE') or
+        Path(blueprint).with_name('state.yaml'))
+    with open_state_file(state_path) as state:
+        print(state['instance_info']['PublicIpAddress'])
+
+
+@cli.command()
+@click.option('--blueprint', metavar='FILE', default='blueprint.yaml')
+@click.option('--state', metavar='FILE', help='path to state file')
 def ssh(blueprint, state):
     bp = Blueprint(blueprint)
     state_path = Path(
