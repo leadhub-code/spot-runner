@@ -32,10 +32,17 @@ class RunSpotInstance:
         self.upload()
         self.run_ssh(self.blueprint.remote_command)
 
-    def run_interactive_ssh(self):
+    def run_interactive_ssh(self, user=None):
         self.ensure_instance()
         self.instance_info()
-        self.run_ssh(self.blueprint.interactive_shell or ['/bin/bash', '-l'], tty=True)
+        self.run_ssh(self.blueprint.interactive_shell or ['/bin/bash', '-l'], user=user, tty=True)
+
+    def run_ssh_command(self, command, user=None):
+        assert isinstance(command, (list, tuple))
+        command = list(command)
+        self.ensure_instance()
+        self.instance_info()
+        self.run_ssh(command, user=user, tty=False)
 
     def ensure_instance(self):
         if self.state.get('instance_id'):
@@ -91,13 +98,13 @@ class RunSpotInstance:
                 f.write(content)
         return build_dir
 
-    def run_ssh(self, cmd, input=None, tty=False):
+    def run_ssh(self, cmd, user=None, input=None, tty=False):
         assert isinstance(cmd, list)
         ssh_args = [
             '-S', 'none',
             '-C',
             '-i', str(self.ssh_private_key_path()),
-            '-l', self.blueprint.ssh_username or 'admin',
+            '-l', user or self.blueprint.ssh_username or 'admin',
             '-o', 'UserKnownHostsFile=' + str(self.instance_host_key_path()),
         ]
         if tty:
@@ -111,7 +118,11 @@ class RunSpotInstance:
         ] + cmd
         logger.info('Running SSH %s', cmd)
         logger.debug('Full command: %s', full_cmd)
-        subprocess.run(full_cmd, input=input, check=True)
+        try:
+            subprocess.run(full_cmd, input=input, check=True)
+        except Exception as e:
+            logger.error('Caught exception while running ssh: %r', e)
+            raise AppError('Failed to run SSH command: {!r}'.format(cmd)) from e
 
     def ssh_private_key_path(self):
         if not self.blueprint.ssh_private_key:

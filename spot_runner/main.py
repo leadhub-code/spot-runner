@@ -97,7 +97,9 @@ def ip_address(blueprint, state):
 @cli.command()
 @click.option('--blueprint', metavar='FILE', default='blueprint.yaml')
 @click.option('--state', metavar='FILE', help='path to state file')
-def ssh(blueprint, state):
+@click.option('--user', metavar='USERNMAME', help='username to login as')
+@click.argument('command', nargs=-1)
+def ssh(blueprint, state, user, command):
     bp = Blueprint(blueprint)
     state_path = Path(
         state or
@@ -106,7 +108,10 @@ def ssh(blueprint, state):
     with open_state_file(state_path) as state:
         with TemporaryDirectory(prefix='spot_runner.') as td:
             r = RunSpotInstance(state=state, blueprint=bp, temp_dir=Path(td))
-            r.run_interactive_ssh()
+            if command:
+                r.run_ssh_command(user=user, command=command)
+            else:
+                r.run_interactive_ssh(user=user)
 
 
 log_format = '%(asctime)s %(name)-22s %(levelname)5s: %(message)s'
