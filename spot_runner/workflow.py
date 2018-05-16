@@ -225,7 +225,7 @@ class RunSpotInstance:
         if not self._instance_info:
             reply = self.ec2_client.describe_instances(DryRun=False, InstanceIds=[self.instance_id()])
             if not reply['Reservations']:
-                raise Exception('Could not find instance {} - maybe it was deleted?'.format(self.instance_id()))
+                raise AppError('Could not find instance {} - maybe it was deleted?'.format(self.instance_id()))
             reservation, = reply['Reservations']
             logger.debug('Reservation: %r', reservation)
             logger.info('Reservation id: %s', reservation['ReservationId'])

@@ -20,12 +20,12 @@ def spot_runner_main():
         cli(obj={})
     except SystemExit as e:
         raise e
+    except AppError as e:
+        logger.error('Spot runner failed: %s', e)
+        sys.exit(1)
     except BaseException as e:
         # we want error messages to go into log; default handlers only prints to stderr
-        if isinstance(e, AppError):
-            logger.error('Spot runner failed: %s', e)
-        else:
-            logger.exception('Spot runner failed: %r', e)
+        logger.exception('Spot runner failed: %r', e)
         sys.exit(1)
 
 
