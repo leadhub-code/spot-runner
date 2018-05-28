@@ -31,18 +31,20 @@ def test_preprocess_jinja():
 
 
 def test_preprocess_jinja_with_read_file(temp_dir):
-    sample_file = _write_file(temp_dir / 'sample.txt', 'bar')
+    sample_file = temp_dir / 'sample.txt'
+    sample_file.write_text('bar')
     content = "foo {{ read_file('sample.txt') }} baz"
     result = preprocess_jinja(temp_dir, content, {'x2': 'baz'})
     assert result == 'foo bar baz'
 
 
 def test_preprocess_yaml_includes(temp_dir):
-    sample_file = _write_file(temp_dir / 'sample.txt', 'bar')
-    content = dedent('''\
+    sample_file = temp_dir / 'sample.txt'
+    sample_file.write_text('bar')
+    content = '''
         foo:
             INCLUDE_TEXT: sample.txt
-    ''')
+    '''
     result = preprocess_yaml_includes(temp_dir, content)
     assert result == 'foo: bar\n'
 
@@ -56,7 +58,8 @@ def test_preprocess_file():
 
 
 def test_preprocess_file_with_jinja_and_yaml_includes(temp_dir):
-    sample_file = _write_file(temp_dir / 'sample.txt', 'bar')
+    sample_file = temp_dir / 'sample.txt'
+    sample_file.write_text('bar')
     # jinja transformation first, yaml-includes second
     content = dedent('''\
         #!jinja
@@ -66,9 +69,3 @@ def test_preprocess_file_with_jinja_and_yaml_includes(temp_dir):
     ''')
     result = preprocess_file(temp_dir / 'test.txt', content, {'name': 'sample'})
     assert result == 'foo: bar\n'
-
-
-def _write_file(path, content):
-    with path.open('w') as f:
-        f.write(content)
-    return path
